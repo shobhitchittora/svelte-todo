@@ -24,13 +24,17 @@
     return { id, text, done };
   }
 
-  function handleAdd(ev) {
+  function addTodo(ev) {
     const data = new FormData(ev.target);
     const todo = data.get("todo");
 
     if (todo && todo.trim()) {
       todos = [...todos, createTodo(todos.length + 1, todo)];
     }
+  }
+
+  function removeTodo(id) {
+    todos = todos.filter(todo => todo.id !== id);
   }
 
   function toggleTodo(id) {
@@ -47,8 +51,19 @@
   }
 </script>
 
-<h1>Todo list</h1>
-<p>Remaining Todos {remainingTodos}</p>
-<TodoInput bind:handleAdd />
-<List items={filteredTodos} bind:toggleTodo />
-<Filters bind:handleFilterChange />
+<style>
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    width: 40%;
+  }
+</style>
+
+<div class="app-container">
+  <h1>Todo list</h1>
+  <p>Remaining Todos {remainingTodos}</p>
+  <Filters bind:handleFilterChange />
+  <TodoInput bind:addTodo />
+  <List items={filteredTodos} bind:toggleTodo bind:removeTodo />
+</div>

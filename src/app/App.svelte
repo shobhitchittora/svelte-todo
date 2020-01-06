@@ -4,12 +4,21 @@
   import Filters from "./Filters.svelte";
   import { filters } from "./filters.json";
 
-  let items = [
+  let currentFilter = "all";
+
+  let todos = [
     { id: 1, text: "Get some eggs", done: true },
     { id: 2, text: "Do some work", done: false }
   ];
 
-  let filteredItems = items;
+  $: filteredTodos =
+    currentFilter === "all"
+      ? todos
+      : currentFilter === "completed"
+      ? todos.filter(todo => todo.done)
+      : todos.filter(todo => !todo.done);
+
+  $: remainingTodos = todos.filter(({ done }) => !done).length;
 
   function createTodo(id, text, done = false) {
     return { id, text, done };
@@ -20,12 +29,12 @@
     const todo = data.get("todo");
 
     if (todo && todo.trim()) {
-      items = [...items, createTodo(items.length + 1, todo)];
+      todos = [...todos, createTodo(todos.length + 1, todo)];
     }
   }
 
   function toggleTodo(id) {
-    items = items.map(todo => {
+    todos = todos.map(todo => {
       if (todo.id === id) {
         todo.done = !todo.done;
       }
@@ -34,23 +43,12 @@
   }
 
   function handleFilterChange(selection) {
-    switch (selection) {
-      case filters.COMPLETED: {
-        filteredItems = items.filter(({ done }) => done);
-        break;
-      }
-      case filters.PENDING: {
-        filteredItems = items.filter(({ done }) => !done);
-        break;
-      }
-      default:
-        filteredItems = items;
-        break;
-    }
+    currentFilter = selection;
   }
 </script>
 
 <h1>Todo list</h1>
+<p>Remaining Todos {remainingTodos}</p>
 <TodoInput bind:handleAdd />
-<List items={filteredItems} bind:toggleTodo />
+<List items={filteredTodos} bind:toggleTodo />
 <Filters bind:handleFilterChange />

@@ -1,5 +1,5 @@
 <script>
-  let userInput = "";
+  let value;
   let handleAdd;
 </script>
 
@@ -11,9 +11,9 @@
 
 <form
   on:submit|preventDefault={ev => {
-    userInput = '';
+    value = '';
     $$props.handleAdd(ev);
   }}>
-  <input bind:value={userInput} type="text" name="todo" class="input" />
+  <input bind:value type="text" name="todo" class="input" />
   <button type="submit">Add</button>
 </form>
